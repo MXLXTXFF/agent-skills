@@ -9,6 +9,7 @@
 ```
 agent-skills/
 └── skills/
+    ├── cross-session-task-contract-management.md  # FRONTEND_SYNC.md / BACKEND_SYNC.md — задачи между сессиями
     ├── environment-configuration-management.md   # .env, .env.example, переменные окружения, именование
     ├── github-operations-management.md           # Git/GitHub: аутентификация, коммиты, пуш, безопасность
     ├── project-documentation-and-agent-memory.md  # README.md и AGENT.md — правила ведения и синхронизации
