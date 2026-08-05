@@ -13,7 +13,8 @@ agent-skills/
     ├── environment-configuration-management.md   # .env, .env.example, переменные окружения, именование
     ├── github-operations-management.md           # Git/GitHub: аутентификация, коммиты, пуш, безопасность
     ├── project-documentation-and-agent-memory.md  # README.md и AGENT.md — правила ведения и синхронизации
-    └── project-and-service-development.md         # архитектура, БД, Docker, тестирование, коммуникация
+    ├── project-and-service-development.md         # архитектура, БД, Docker, тестирование, коммуникация
+    └── public-changelog-and-devlog-management.md  # публичный changelog/devlog для конечных пользователей
 ```
 
 Каждый файл в `skills/` начинается со строки **«Триггер применения»** — она описывает, в каком контексте работы этот скилл становится обязательным. Агент использует эти триггеры, чтобы понять, какие скиллы актуальны для текущей задачи, не читая и не применяя лишнего.
