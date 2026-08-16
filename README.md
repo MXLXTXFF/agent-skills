@@ -9,12 +9,13 @@
 ```
 agent-skills/
 └── skills/
-    ├── cross-session-task-contract-management.md  # FRONTEND_SYNC.md / BACKEND_SYNC.md — задачи между сессиями
-    ├── environment-configuration-management.md   # .env, .env.example, переменные окружения, именование
-    ├── github-operations-management.md           # Git/GitHub: аутентификация, коммиты, пуш, безопасность
-    ├── project-documentation-and-agent-memory.md  # README.md и AGENT.md — правила ведения и синхронизации
-    ├── project-and-service-development.md         # архитектура, БД, Docker, тестирование, коммуникация
-    └── public-changelog-and-devlog-management.md  # публичный changelog/devlog для конечных пользователей
+    ├── cross-session-task-contract-management.md      # FRONTEND_SYNC.md / BACKEND_SYNC.md — задачи между сессиями
+    ├── environment-configuration-management.md        # .env, .env.example, переменные окружения, именование
+    ├── github-operations-management.md                # Git/GitHub: аутентификация, коммиты, пуш, безопасность
+    ├── on-demand-refactoring-and-code-optimization.md  # аудит/рефакторинг/оптимизация по прямому запросу
+    ├── project-documentation-and-agent-memory.md       # README.md и AGENT.md — правила ведения и синхронизации
+    ├── project-and-service-development.md              # архитектура, БД, Docker, тестирование, коммуникация
+    └── public-changelog-and-devlog-management.md       # публичный changelog/devlog для конечных пользователей
 ```
 
 Каждый файл в `skills/` начинается со строки **«Триггер применения»** — она описывает, в каком контексте работы этот скилл становится обязательным. Агент использует эти триггеры, чтобы понять, какие скиллы актуальны для текущей задачи, не читая и не применяя лишнего.
@@ -73,6 +74,96 @@ Universal Skills Onboarding
 - Скиллы читаются целиком при каждом запросе на обновление — агент не должен полагаться на память о старой версии файла после того, как получил сигнал об изменениях.
 - Обновление или добавление скилла в этом репозитории не требует ничего, кроме коммита в `skills/` — все существующие чат-сессии подтянут изменения по сигналу «скиллы обновились» без повторной настройки.
 
+### Промты для конкретного скилла
+
+Общий промт выше сам выбирает подходящие скиллы по триггерам. Если вместо этого нужно принудительно применить один конкретный скилл прямо сейчас — независимо от того, совпадает ли текущая задача с его триггером — используй короткий промт этого скилла из списка ниже. Формат тот же: обычный текст без markdown-разметки, копируется целиком и отправляется в чат.
+
+**Environment Configuration Management**
+```
+Skill: Environment Configuration Management
+File: skills/environment-configuration-management.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/environment-configuration-management.md целиком и следуй его
+правилам как обязательным для этой задачи до её завершения, независимо
+от того, совпадает ли она с описанным в файле триггером.
+```
+
+**GitHub Operations Management**
+```
+Skill: GitHub Operations Management
+File: skills/github-operations-management.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/github-operations-management.md целиком и следуй его правилам как
+обязательным для этой задачи до её завершения, независимо от того,
+совпадает ли она с описанным в файле триггером.
+```
+
+**Project Documentation and Agent Memory**
+```
+Skill: Project Documentation and Agent Memory
+File: skills/project-documentation-and-agent-memory.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/project-documentation-and-agent-memory.md целиком и следуй его
+правилам как обязательным для этой задачи до её завершения, независимо
+от того, совпадает ли она с описанным в файле триггером.
+```
+
+**Project and Service Development**
+```
+Skill: Project and Service Development
+File: skills/project-and-service-development.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/project-and-service-development.md целиком и следуй его правилам
+как обязательным для этой задачи до её завершения, независимо от того,
+совпадает ли она с описанным в файле триггером.
+```
+
+**Cross-Session Task Contract Management**
+```
+Skill: Cross-Session Task Contract Management
+File: skills/cross-session-task-contract-management.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/cross-session-task-contract-management.md целиком и следуй его
+правилам как обязательным для этой задачи до её завершения, независимо
+от того, совпадает ли она с описанным в файле триггером.
+```
+
+**Public Changelog and Devlog Management**
+```
+Skill: Public Changelog and Devlog Management
+File: skills/public-changelog-and-devlog-management.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/public-changelog-and-devlog-management.md целиком и следуй его
+правилам как обязательным для этой задачи до её завершения, независимо
+от того, совпадает ли она с описанным в файле триггером.
+```
+
+**On-Demand Refactoring and Code Optimization**
+```
+Skill: On-Demand Refactoring and Code Optimization
+File: skills/on-demand-refactoring-and-code-optimization.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/on-demand-refactoring-and-code-optimization.md целиком и следуй
+его правилам как обязательным для этой задачи до её завершения,
+независимо от того, совпадает ли она с описанным в файле триггером.
+```
+
 ## Обновление скиллов
 
 Новые правила и правки добавляются напрямую в `skills/`. Ссылка на репозиторий остаётся неизменной — обновляется только содержимое файлов, поэтому один и тот же универсальный промт продолжает работать после любых изменений.
+
+При добавлении нового скилла обязательно: добавить файл в дерево структуры выше и добавить для него короткий промт в раздел «Промты для конкретного скилла» по тому же шаблону (Skill / File / текст с git pull и путём до файла).
