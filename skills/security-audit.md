@@ -1,8 +1,9 @@
 ---
 name: Security Audit
 description: >
-  Governs explicitly requested deep security audits of applications and server
-  infrastructure, including scope approval, audit levels, threat modeling,
+  Governs explicitly requested deep security audits of project applications,
+  repositories, project configuration, and project-owned runtime components,
+  including scope approval, audit levels, threat modeling,
   architecture and attack-surface mapping, authentication and authorization
   review, API and business-logic testing, secrets and supply-chain review,
   Docker and CI/CD security, evidence-based findings, remediation approval,
@@ -103,12 +104,6 @@ Perform a deep production-readiness security review.
 
 This mode includes a production security gate defined later in this skill.
 
-### 3.5 Server Infrastructure Audit
-
-Audit the host and deployment environment separately from the application audit.
-
-The audit begins with read-only discovery of the environment, followed by an audit plan that requires user approval before active or state-changing checks.
-
 ## 4. Audit Levels
 
 Use one of the following depth levels.
@@ -123,7 +118,7 @@ Prioritize:
 - exposed secrets;
 - unsafe configuration;
 - high-impact input handling;
-- dangerous infrastructure exposure;
+- dangerous project runtime or configuration exposure;
 - known vulnerable dependencies directly relevant to the scope.
 
 ### 4.2 Level 2 — Deep Audit
@@ -147,13 +142,12 @@ Use for the deepest practical review before production or for explicitly request
 
 Includes all relevant Level 2 work plus broader verification of:
 
-- runtime exposure;
-- infrastructure;
+- project runtime exposure;
+- project container and deployment configuration;
 - supply chain;
 - CI/CD;
-- production configuration;
-- backup and recovery security where applicable;
-- deployment boundaries;
+- production-facing project configuration;
+- project-controlled trust boundaries;
 - residual risk;
 - production security gate.
 
@@ -192,18 +186,59 @@ After the audit:
 2. classify severity and confidence;
 3. prepare the remediation plan;
 4. explain material architecture or compatibility impact;
-5. wait for explicit user approval before modifying code, configuration, infrastructure, or repository state.
+5. wait for explicit user approval before modifying project code, project configuration, project-owned runtime components, or repository state.
 
 Only approved remediation work may proceed.
 
-## 6. Authorization and Environment Safety
+## 6. Project Scope Boundary, Authorization, and Environment Safety
+
+This skill is strictly limited to the project and project-controlled security surface.
+
+Allowed scope includes:
+
+- project source code;
+- project repository and relevant Git history;
+- project configuration files;
+- project environment-variable definitions and validation logic;
+- project Dockerfiles and Compose files;
+- project-owned containers and services;
+- project application runtime behavior;
+- project API and inter-service contracts;
+- project CI/CD configuration;
+- project dependencies and supply chain;
+- project-controlled logs and error behavior;
+- project-owned external integrations and endpoints when needed to assess the application contract.
+
+This skill does not audit or modify the host machine outside the project scope.
+
+Do not inspect or change host-level areas such as:
+
+- operating-system hardening;
+- SSH daemon configuration;
+- host firewall configuration;
+- host users or groups;
+- sudo configuration;
+- system-wide filesystem permissions;
+- systemd units outside the project;
+- cron jobs outside the project;
+- host package configuration;
+- Docker daemon configuration;
+- host-wide Docker networking;
+- reverse-proxy configuration maintained outside the project;
+- host database or cache service configuration maintained outside the project;
+- host backup system configuration;
+- unrelated services running on the machine.
+
+If project configuration references a host path, Docker socket, host network mode, privileged container mode, or another host-level capability, evaluate the security risk of that declaration from the project side, but do not inspect or audit the underlying host resource itself.
+
+Host-machine and server-infrastructure security requires a separate explicitly requested skill and is out of scope here.
 
 Before testing, identify:
 
-- target service;
-- target environment;
-- owned domains or hosts;
-- external dependencies;
+- target project or service;
+- target application environment;
+- project-controlled domains or endpoints;
+- external dependencies relevant to the project;
 - allowed actions;
 - prohibited actions.
 
@@ -223,8 +258,7 @@ Do not automatically perform:
 - load saturation;
 - destructive database operations;
 - mass enumeration;
-- destructive file operations;
-- destructive privilege tests.
+- destructive project-file operations.
 
 Production testing should default to non-destructive verification.
 
@@ -236,7 +270,7 @@ Before the audit:
 - run relevant existing tests;
 - inspect current logs;
 - record existing errors and warnings;
-- identify exposed services and ports;
+- identify project-exposed services and ports;
 - identify authentication methods;
 - identify privileged paths;
 - identify external integrations;
@@ -610,18 +644,22 @@ Do not automatically upgrade major dependencies during the audit.
 
 Dependency remediation follows the normal approval gate.
 
-## 23. Docker and Runtime Security
+## 23. Docker and Project Runtime Security
+
+Review project Dockerfiles, Compose configuration, and project-owned containers only.
+
+Do not audit Docker daemon configuration, unrelated containers, host networking, or host filesystem contents outside the project.
 
 Review applicable:
 
 - non-root execution;
 - Linux capabilities;
 - privileged mode;
-- host mounts;
-- Docker socket access;
+- host mounts declared by the project, without inspecting the mounted host path itself;
+- Docker socket access declared by the project, without auditing the host Docker daemon;
 - secrets in image layers;
 - published ports;
-- network isolation;
+- project container network isolation;
 - read-only filesystem where practical;
 - image provenance;
 - unused packages;
@@ -671,7 +709,7 @@ Do not expose detailed stack traces, database internals, or sensitive implementa
 
 ### 26.1 No Unapproved Installation
 
-Do not install third-party security software on the host without explicit user approval.
+Do not install third-party security software on the host without explicit user approval. Tool installation permission does not expand the audit scope to host-machine security.
 
 ### 26.2 Tool Priority
 
@@ -986,99 +1024,29 @@ Use applicable final statuses:
 
 The agent must not accept risk on the user's behalf.
 
-## 40. Server Infrastructure Audit
-
-Server infrastructure audit is a separate audit mode.
-
-### 40.1 Read-Only Discovery First
-
-Before preparing the infrastructure audit plan, inspect the system using non-destructive read-only methods.
-
-Review applicable areas such as:
-
-- Linux distribution and version;
-- running services;
-- listening ports;
-- SSH configuration;
-- firewall state;
-- users and groups;
-- sudo access;
-- filesystem permissions;
-- Docker;
-- Docker networks;
-- reverse proxy;
-- TLS;
-- service accounts;
-- database exposure;
-- Redis exposure;
-- backup configuration;
-- cron jobs;
-- systemd units;
-- admin interfaces;
-- inter-server authentication;
-- VPN-related services when present.
-
-Do not change the server during discovery.
-
-### 40.2 Infrastructure Audit Plan
-
-After discovery:
-
-1. summarize the observed infrastructure;
-2. identify proposed audit sections;
-3. identify active checks that would be useful;
-4. identify any tools required;
-5. identify risk of each active check;
-6. present the plan to the user;
-7. wait for full or partial approval.
-
-Only approved infrastructure checks may proceed.
-
-### 40.3 Infrastructure Scope
-
-Infrastructure security may include:
-
-- host hardening;
-- SSH;
-- firewall;
-- network exposure;
-- Docker runtime;
-- reverse proxy;
-- TLS;
-- databases;
-- caches;
-- backup security;
-- privileged services;
-- filesystem permissions;
-- service identities;
-- scheduled jobs;
-- administrative surfaces;
-- VPN nodes and credentials when applicable.
-
-Do not assume VPN-specific requirements for projects that do not use VPN infrastructure.
-
-## 41. Pre-Production Security Gate
+## 40. Pre-Production Security Gate
 
 Use only in Pre-Production Audit mode.
 
 Evaluate whether unresolved security issues should block production release.
 
-Check applicable items such as:
+Check applicable project items such as:
 
 - no unresolved Critical findings;
 - unresolved High findings explicitly reviewed;
-- production secrets configured securely;
+- project production secrets configured securely;
 - debug behavior disabled;
 - authorization tests passing;
 - authentication controls verified;
 - dependencies reviewed;
-- Docker/runtime security reviewed;
-- public ports reviewed;
-- infrastructure exposure reviewed;
-- backup and recovery security reviewed when relevant;
-- administrative surfaces reviewed;
-- production configuration reviewed;
+- project Docker/runtime security reviewed;
+- project-published ports reviewed;
+- project-controlled deployment configuration reviewed;
+- project administrative endpoints reviewed when applicable;
+- production-facing project configuration reviewed;
 - CI/CD deployment permissions reviewed.
+
+Host-machine hardening, SSH, firewall, system services, host backup configuration, and other server-wide controls are explicitly outside this gate.
 
 If a Critical issue remains unresolved, report production as blocked from a security perspective.
 
@@ -1086,7 +1054,7 @@ For unresolved High findings, report the risk and require explicit user decision
 
 Do not accept production risk automatically.
 
-## 42. Documentation and Synchronization
+## 41. Documentation and Synchronization
 
 After approved remediation, check whether security changes require updates to:
 
@@ -1102,7 +1070,7 @@ Examples:
 
 Do not place exploit details or sensitive evidence in public project documentation.
 
-## 43. Security Audit Report
+## 42. Security Audit Report
 
 Create a local Markdown report:
 
@@ -1132,7 +1100,7 @@ Recommended structure:
 ## Executive Summary
 ## Scope
 ## Audit Mode and Level
-## Environment
+## Application Environment
 ## Methodology
 ## Architecture and Assets
 ## Attack Surface
@@ -1148,7 +1116,7 @@ Recommended structure:
 
 Update the same report through remediation and re-test when practical instead of creating unnecessary duplicate audit files.
 
-## 44. Chat Summary
+## 43. Chat Summary
 
 Provide the user with a concise Russian summary.
 
@@ -1175,7 +1143,7 @@ Potential: 3
 
 Do not expose unnecessary exploit details, credentials, or sensitive payloads in the chat summary.
 
-## 45. Final Verification
+## 44. Final Verification
 
 After remediation and re-testing:
 
@@ -1192,7 +1160,7 @@ After remediation and re-testing:
 - update `SECURITY_AUDIT.md`;
 - update documentation and sync files when required.
 
-## 46. Definition of Done
+## 45. Definition of Done
 
 A Security Audit is complete only when all applicable conditions are satisfied:
 
@@ -1200,8 +1168,9 @@ A Security Audit is complete only when all applicable conditions are satisfied:
 - audit mode was selected;
 - audit level was selected;
 - scope was defined;
-- environment ownership and authorization were understood;
-- safe read-only discovery was performed before intrusive checks;
+- audit activity remained inside the project security boundary and did not audit the host machine;
+- project target environment and authorization scope were understood;
+- safe project-scoped read-only discovery was performed before intrusive checks;
 - baseline was recorded;
 - relevant security benchmark data was captured where applicable;
 - architecture and assets were mapped;
@@ -1223,7 +1192,7 @@ A Security Audit is complete only when all applicable conditions are satisfied:
 - cryptography and transport were reviewed when applicable;
 - data security was reviewed when applicable;
 - dependencies and supply chain were reviewed when applicable;
-- Docker/runtime security was reviewed when applicable;
+- project Docker/runtime security was reviewed when applicable;
 - CI/CD and repository security were reviewed when applicable;
 - logging and error handling were reviewed when applicable;
 - third-party tools were not installed without approval;
@@ -1244,8 +1213,6 @@ A Security Audit is complete only when all applicable conditions are satisfied:
 - unresolved risk was reported;
 - Accepted Risk statuses reflect explicit user decisions;
 - Pre-Production Gate was evaluated when applicable;
-- server infrastructure was not changed during discovery;
-- infrastructure audit actions followed the approved infrastructure plan;
 - `SECURITY_AUDIT.md` was created or updated;
 - the audit report remains local and outside Git;
 - the audit report is written in English;
