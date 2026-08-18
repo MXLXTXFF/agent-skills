@@ -15,7 +15,7 @@
 
 ## Обзор системы
 
-Репозиторий решает одну задачу: перенести повторяющиеся требования пользователя к работе агента (окружение, Git, документация, координация между сессиями, рефакторинг, публичные changelog) из памяти одной чат-сессии в переиспользуемый, версионируемый источник правды, доступный любой сессии на сервере.
+Репозиторий решает одну задачу: перенести повторяющиеся требования пользователя к работе агента (окружение, Git, документация, координация между сессиями, рефакторинг, публичные changelog, API, базы данных, security-аудит) из памяти одной чат-сессии в переиспользуемый, версионируемый источник правды, доступный любой сессии на сервере.
 
 ```text
 Репозиторий agent-skills (Git, GitHub)
@@ -45,10 +45,13 @@
 | Project Documentation and Agent Memory | `skills/project-documentation-and-agent-memory.md` | Ведение `README.md` и `AGENT.md`: структура, язык, синхронизация с кодом, разграничение публичной документации и памяти агента. |
 | Public Changelog and Devlog Management | `skills/public-changelog-and-devlog-management.md` | Подготовка публичных changelog/devlog для пользователей: накопление изменений, фильтрация внутренних деталей, стиль, версионирование, безопасное описание security-исправлений. |
 | Project and Service Development | `skills/project-and-service-development.md` | Проектирование, реализация, ревью, тестирование и диагностика кода сервисов: приоритет правил, workflow разработки, архитектура, безопасность, БД, Docker, тестирование, коммуникация с пользователем. |
+| API Development | `skills/api-development.md` | Проектирование, изменение, версионирование и документирование API-контрактов (REST/GraphQL/WebSocket/SSE/webhooks): совместимость, ошибки, пагинация, идемпотентность, ретраи, кросс-сервисная синхронизация. |
+| Database Development and Migration Management | `skills/database-development-and-migration-management.md` | Проектирование схемы БД, миграции, изоляция тестовых БД, бэкап/восстановление, индексы, фикстуры, обнаружение дрейфа схемы, безопасность данных. |
+| Security Audit | `skills/security-audit.md` | Глубокий security-аудит строго по явному запросу: режимы и уровни аудита, threat modeling, проверка аутентификации/авторизации, API и бизнес-логики, секретов, Docker/CI-CD, отчётность с доказательствами, повторное тестирование. |
 
 ## Формат скилла
 
-Действующий стандарт (применяется ко всем 7 файлам в `skills/`):
+Действующий стандарт (применяется ко всем 10 файлам в `skills/`):
 
 - Файл открывается YAML-фронтматтером с двумя обязательными полями: `name` (человекочитаемое имя скилла) и `description` (сжатое описание области применения — по нему агент сопоставляет скилл с задачей).
 - Тело файла ведётся на английском языке и структурировано разделами: `Purpose` (назначение), `Activation` (условия, при которых скилл обязателен), далее — тематические разделы с конкретными правилами, а где уместно — примеры «плохо/хорошо».
@@ -60,13 +63,16 @@
 agent-skills/
 ├── README.md
 └── skills/
+    ├── api-development.md
     ├── cross-session-task-contract-management.md
+    ├── database-development-and-migration-management.md
     ├── environment-configuration-management.md
     ├── github-operations-management.md
     ├── on-demand-refactoring-and-code-optimization.md
     ├── project-and-service-development.md
     ├── project-documentation-and-agent-memory.md
-    └── public-changelog-and-devlog-management.md
+    ├── public-changelog-and-devlog-management.md
+    └── security-audit.md
 ```
 
 ## Конфигурация
@@ -208,6 +214,42 @@ git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
 skills/project-and-service-development.md целиком и следуй его правилам
 как обязательным для этой задачи до её завершения, независимо от того,
 совпадает ли она с разделом Activation в файле.
+```
+
+**API Development**
+```
+Skill: API Development
+File: skills/api-development.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/api-development.md целиком и следуй его правилам как обязательным
+для этой задачи до её завершения, независимо от того, совпадает ли она
+с разделом Activation в файле.
+```
+
+**Database Development and Migration Management**
+```
+Skill: Database Development and Migration Management
+File: skills/database-development-and-migration-management.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/database-development-and-migration-management.md целиком и следуй
+его правилам как обязательным для этой задачи до её завершения,
+независимо от того, совпадает ли она с разделом Activation в файле.
+```
+
+**Security Audit**
+```
+Skill: Security Audit
+File: skills/security-audit.md
+
+Обнови /srv/agent-skills (git pull, при отсутствии директории — git clone
+git@github.com:MXLXTXFF/agent-skills.git /srv/agent-skills), прочитай
+skills/security-audit.md целиком и следуй его правилам как обязательным
+для этой задачи до её завершения, независимо от того, совпадает ли она
+с разделом Activation в файле.
 ```
 
 ## Обновление скиллов
